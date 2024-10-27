@@ -1,0 +1,7 @@
+profile          = ""
+my_ip            = ""
+prefix           = ""
+db_name          = ""
+db_user          = ""
+db_password      = ""      
+db_root_password = ""
