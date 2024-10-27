@@ -25,7 +25,7 @@ https://qiita.com/hoyat4967/items/074716895f737b79e3ed
 
 `git clone https://github.com/takaakihoya/aws-ec2-wordpress.git`
 
-2.以下コマンドでcloneしたディレクトリに以下コマンドでterraform.tfvarsを作成する
+2.以下コマンドでcloneしたディレクトリにterraform.tfvarsを作成する
 
 `touch terraform.tfvars`
 
