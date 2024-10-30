@@ -1,5 +1,5 @@
 resource "aws_instance" "this" {
-  ami                         = "ami-013a28d7c2ea10269"
+  ami                         = "ami-03f584e50b2d32776"
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public["public_subnet_1a"].id
   security_groups             = [aws_security_group.this.id]
