@@ -67,6 +67,7 @@ resource "aws_db_instance" "this" {
   manage_master_user_password = true
   db_subnet_group_name        = aws_db_subnet_group.private_db_subnet_group.name
   vpc_security_group_ids      = [aws_security_group.db.id]
+  skip_final_snapshot         = true
   tags = {
     Name = "${var.prefix}-db"
   }
