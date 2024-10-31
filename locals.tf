@@ -39,3 +39,43 @@ locals {
     }
   }
 }
+
+locals {
+  security_groups = {
+    ec2 = {
+      name        = "${var.prefix}-ec2-sg"
+      description = "Allow  My IP and DB Access"
+      ingress = {
+        from_port   = 80
+        to_port     = 80
+        protocol    = "tcp"
+        cidr_blocks = ["${var.my_ip}/32"]
+      }
+      egress = {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+      tags = {
+        Name = "${var.prefix}-ec2-sg"
+      }
+    }
+    db = {
+      name        = "${var.prefix}-db-sg"
+      description = "Allow EC2 Access"
+      ingress = {
+        from_port       = 3306
+        to_port         = 3306
+        protocol        = "tcp"
+        security_groups = [aws_security_group.ec2.id]
+      }
+      egress = {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+      }
+    }
+  }
+}

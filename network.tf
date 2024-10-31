@@ -25,6 +25,10 @@ resource "aws_subnet" "private" {
   tags                    = each.value.tags
 }
 
+resource "aws_db_subnet_group" "private_db_subnet_group" {
+  subnet_ids = [for subnet in aws_subnet.private : subnet.id]
+}
+
 resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
   tags = {
@@ -49,7 +53,7 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-resource "aws_security_group" "this" {
+resource "aws_security_group" "ec2" {
   vpc_id = aws_vpc.this.id
   ingress {
     from_port   = 80
@@ -65,5 +69,24 @@ resource "aws_security_group" "this" {
   }
   tags = {
     Name = "${var.prefix}-sg"
+  }
+}
+
+resource "aws_security_group" "db" {
+  vpc_id = aws_vpc.this.id
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "${var.prefix}-db-sg"
   }
 }
