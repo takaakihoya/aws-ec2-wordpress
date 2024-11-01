@@ -56,8 +56,8 @@ resource "aws_route_table_association" "public" {
 resource "aws_security_group" "ec2" {
   vpc_id = aws_vpc.this.id
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["${var.my_ip}/32"]
   }
@@ -69,6 +69,25 @@ resource "aws_security_group" "ec2" {
   }
   tags = {
     Name = "${var.prefix}-sg"
+  }
+}
+
+resource "aws_security_group" "ssm" {
+  vpc_id = aws_vpc.this.id
+  ingress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    security_groups = [aws_security_group.ec2.id]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "${var.prefix}-ssm-sg"
   }
 }
 
@@ -88,5 +107,20 @@ resource "aws_security_group" "db" {
   }
   tags = {
     Name = "${var.prefix}-db-sg"
+  }
+}
+
+resource "aws_vpc_endpoint" "this" {
+  for_each            = local.vpc_endpoint
+  vpc_id              = aws_vpc.this.id
+  service_name        = each.value.service_name
+  vpc_endpoint_type   = each.value.vpc_endpoint_type
+  subnet_ids          = each.value.subnet_ids
+  private_dns_enabled = true
+    security_group_ids = [
+    aws_security_group.ssm.id,
+  ]
+  tags = {
+    Name = "${var.prefix}-vpc-endpoint-${each.key}"
   }
 }

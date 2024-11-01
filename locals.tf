@@ -79,3 +79,23 @@ locals {
     }
   }
 }
+
+locals {
+  vpc_endpoint = {
+    ssm = {
+      service_name      = "com.amazonaws.ap-northeast-1.ssm"
+      vpc_endpoint_type = "Interface"
+      subnet_ids        = [aws_subnet.private["private_subnet_1a"].id, aws_subnet.private["private_subnet_1c"].id]
+    }
+    ssmmessages = {
+      service_name      = "com.amazonaws.ap-northeast-1.ssmmessages"
+      vpc_endpoint_type = "Interface"
+      subnet_ids        = [aws_subnet.private["private_subnet_1a"].id, aws_subnet.private["private_subnet_1c"].id]
+    }
+    ec2messages = {
+      service_name      = "com.amazonaws.ap-northeast-1.ec2messages"
+      vpc_endpoint_type = "Interface"
+      subnet_ids        = [aws_subnet.private["private_subnet_1a"].id, aws_subnet.private["private_subnet_1c"].id]
+    }
+  }
+}

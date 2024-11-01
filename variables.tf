@@ -36,14 +36,14 @@ variable "db_user" {
   sensitive   = true # セキュアに取り扱う
 }
 
-variable "db_password" {
-  type        = string
-  description = "WordPressのデータベースユーザーのパスワード"
-  sensitive   = true # セキュアに取り扱う
-}
+# variable "db_password" {
+#   type        = string
+#   description = "WordPressのデータベースユーザーのパスワード"
+#   sensitive   = true # セキュアに取り扱う
+# }
 
-variable "db_root_password" {
-  type        = string
-  description = "MariaDBのrootユーザーのパスワード"
-  sensitive   = true # セキュアに取り扱う
-}
+# variable "db_root_password" {
+#   type        = string
+#   description = "MariaDBのrootユーザーのパスワード"
+#   sensitive   = true # セキュアに取り扱う
+# }

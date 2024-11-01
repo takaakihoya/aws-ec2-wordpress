@@ -1,13 +1,29 @@
+#プライベート
 resource "aws_instance" "this" {
   ami                         = "ami-03f584e50b2d32776"
   instance_type               = "t2.micro"
-  subnet_id                   = aws_subnet.public["public_subnet_1a"].id
+  subnet_id                   = aws_subnet.private["private_subnet_1a"].id
   security_groups             = [aws_security_group.ec2.id]
   iam_instance_profile        = aws_iam_instance_profile.ssm_instance_profile.name
-  associate_public_ip_address = true
+  associate_public_ip_address = false
   tags = {
     Name = "${var.prefix}-ec2"
   }
+}
+
+
+
+#パブリック
+# resource "aws_instance" "this" {
+#   ami                         = "ami-03f584e50b2d32776"
+#   instance_type               = "t2.micro"
+#   subnet_id                   = aws_subnet.public["public_subnet_1a"].id
+#   security_groups             = [aws_security_group.ec2.id]
+#   iam_instance_profile        = aws_iam_instance_profile.ssm_instance_profile.name
+#   associate_public_ip_address = true
+#   tags = {
+#     Name = "${var.prefix}-ec2"
+#   }
   # 起動時に実行されるスクリプト
   #   user_data = <<-EOF
   # #!/bin/bash
@@ -56,6 +72,10 @@ resource "aws_instance" "this" {
   # # Apacheの再起動
   # systemctl restart httpd
   # EOF
+# }
+
+data "aws_kms_key" "this" {
+key_id = "263f293f-abd2-463f-b009-71ed4f47afab"  
 }
 
 resource "aws_db_instance" "this" {
@@ -65,9 +85,12 @@ resource "aws_db_instance" "this" {
   instance_class              = "db.t4g.micro"
   username                    = var.db_user
   manage_master_user_password = true
+  kms_key_id                  = data.aws_kms_key.this.arn
   db_subnet_group_name        = aws_db_subnet_group.private_db_subnet_group.name
   vpc_security_group_ids      = [aws_security_group.db.id]
+  storage_encrypted = true
   skip_final_snapshot         = true
+  deletion_protection = false
   tags = {
     Name = "${var.prefix}-db"
   }
